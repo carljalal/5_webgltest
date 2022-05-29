@@ -6,3 +6,5 @@ this is a readme text to write down thoughts about the project
 4) way to write 3d text
 5) way to pick up 3d text or walls and move them around
 6) way to save/load data
+
+enjoy!
