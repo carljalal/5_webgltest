@@ -1,12 +1,74 @@
 <html>
-<head></head>
+<head>
+    <style>
+        body {margin:0px}
+    </style>
+</head>
 <body>
-    <div>hi! yay!!!</div>
+    <script src = "three.js"></script>
     <script>
-        query = document.createElement("input");
-        query.setAttribute("type","textarea");
-        document.body.append(query);
+        //query = document.createElement("input");
+        //query.setAttribute("type","textarea");
+        //document.body.append(query);
         
+
+        const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        const scene = new THREE.Scene();
+        
+        
+        const renderer = new THREE.WebGLRenderer()
+        renderer.setSize(window.innerWidth,window.innerHeight)
+        document.body.appendChild(renderer.domElement)
+
+        const light = new THREE.DirectionalLight(0xffffff,1)
+        light.position.set(0,0,1)
+
+        const boxgeometry = new THREE.BoxGeometry(1,1,1)
+        const material = new THREE.MeshBasicMaterial({color:0x00ffff})
+        const mesh = new THREE.Mesh(boxgeometry,material)
+
+        scene.add(mesh)
+
+        camera.position.z = 5
+
+
+        renderer.render(scene, camera)
+
+x=0
+y=0
+z=5
+
+updaterender = () => {
+    camera.position.set(x,y,z);
+    renderer.render(scene, camera);
+}
+        
+        window.addEventListener("keypress",(event)=>{
+    if(event.key=="w"){
+        z-=.1
+        updaterender();
+    }
+    if(event.key=="s"){
+        z+=.1
+        updaterender();
+    }
+    if(event.key=="a"){
+        x-=.1
+        updaterender();
+    }
+    if(event.key=="d"){
+        x+=.1
+        updaterender();
+    }
+    if(event.key=="q"){
+        y-=.1
+        updaterender();
+    }
+    if(event.key=="e"){
+        y+=.1
+        updaterender();
+    }
+})
     </script>
     
     
