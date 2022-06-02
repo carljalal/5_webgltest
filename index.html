@@ -37,35 +37,64 @@
 x=0
 y=0
 z=5
+a=0;b=0;c=0;
+speed = 0.4
+rotspeed = Math.PI /8;
 
 updaterender = () => {
     camera.position.set(x,y,z);
+    camera.rotation.set(a,b,c);
     renderer.render(scene, camera);
 }
         
         window.addEventListener("keypress",(event)=>{
     if(event.key=="w"){
-        z-=.1
+        z-=speed
         updaterender();
     }
     if(event.key=="s"){
-        z+=.1
+        z+=speed
         updaterender();
     }
     if(event.key=="a"){
-        x-=.1
+        x-=speed
         updaterender();
     }
     if(event.key=="d"){
-        x+=.1
+        x+=speed
         updaterender();
     }
     if(event.key=="q"){
-        y-=.1
+        y-=speed
         updaterender();
     }
     if(event.key=="e"){
-        y+=.1
+        y+=speed
+        updaterender();
+    }
+
+    if(event.key=="g"){
+        a-=speed
+        updaterender();
+    }
+    if(event.key=="t"){
+        a+=speed
+        updaterender();
+    }
+    if(event.key=="h"){
+        b-=speed
+        updaterender();
+    }
+    if(event.key=="f"){
+        b+=speed
+        updaterender();
+    }
+    if(event.key=="r"){
+        c-=speed
+        updaterender();
+    }
+    if(event.key=="y"){
+        c+=speed
         updaterender();
     }
 })
