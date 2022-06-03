@@ -5,49 +5,65 @@
     </style>
 </head>
 <body>
-    <script src = "three.js"></script>
-    <script>
-        //query = document.createElement("input");
-        //query.setAttribute("type","textarea");
-        //document.body.append(query);
+<script src = "three.js"></script>
+<script>
+query = document.createElement("input");
+query.setAttribute("type","textarea");
+document.body.append(query);
+query.setAttribute("width","1000")
+
+document.body.style.backgroundColor = "#000000"
         
 
-        const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-        const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight );
+const scene = new THREE.Scene();
         
         
-        const renderer = new THREE.WebGLRenderer()
-        renderer.setSize(window.innerWidth,window.innerHeight)
-        document.body.appendChild(renderer.domElement)
+const renderer = new THREE.WebGLRenderer()
+renderer.setSize(window.innerWidth,window.innerHeight)
+document.body.appendChild(renderer.domElement)
 
-        const light = new THREE.DirectionalLight(0xffffff,1)
-        light.position.set(0,0,1)
+const light = new THREE.DirectionalLight(0xffffff,1)
+light.position.set(1,1,-1)
 
-        const boxgeometry = new THREE.BoxGeometry(1,1,1)
-        const material = new THREE.MeshBasicMaterial({color:0x00ffff})
-        const mesh = new THREE.Mesh(boxgeometry,material)
+const boxgeometry = new THREE.BoxGeometry(1,1,1)
+const material = new THREE.MeshBasicMaterial({color:0x00ff88})
+const mesh = new THREE.Mesh(boxgeometry,material)
+mesh.position.set(0,0,-3)
 
-        scene.add(mesh)
+scene.add(mesh)
 
-        camera.position.z = 5
+//camera.position.z = 5
 
 
-        renderer.render(scene, camera)
+renderer.render(scene, camera)
 
 x=0
 y=0
-z=5
+z=0
 a=0;b=0;c=0;
-speed = 0.4
+speed = 0.5
 rotspeed = Math.PI /8;
+listenenter = false
 
 updaterender = () => {
     camera.position.set(x,y,z);
     camera.rotation.set(a,b,c);
     renderer.render(scene, camera);
 }
+
+dolistenenter = () => {
+
+}
         
-        window.addEventListener("keypress",(event)=>{
+window.addEventListener("keypress",(event)=>{
+    if(event.key == "Enter"){
+        listenenter = !listenenter;
+    }
+    if(listenenter){
+        dolistenenter();
+    }
+    if(listenenter) return;
     if(event.key=="w"){
         z-=speed
         updaterender();
@@ -64,42 +80,40 @@ updaterender = () => {
         x+=speed
         updaterender();
     }
-    if(event.key=="q"){
+    if(event.key=="f"){
         y-=speed
         updaterender();
     }
-    if(event.key=="e"){
+    if(event.key=="r"){
         y+=speed
         updaterender();
     }
 
     if(event.key=="g"){
-        a-=speed
+        a-=rotspeed
         updaterender();
     }
     if(event.key=="t"){
-        a+=speed
+        a+=rotspeed
         updaterender();
     }
-    if(event.key=="h"){
-        b-=speed
+    if(event.key=="e"){
+        b-=rotspeed
         updaterender();
     }
-    if(event.key=="f"){
-        b+=speed
+    if(event.key=="q"){
+        b+=rotspeed
         updaterender();
     }
-    if(event.key=="r"){
-        c-=speed
+    if(event.key=="z"){
+        c-=rotspeed
         updaterender();
     }
-    if(event.key=="y"){
-        c+=speed
+    if(event.key=="c"){
+        c+=rotspeed
         updaterender();
     }
 })
-    </script>
-    
-    
+</script>
 </body>
 </html>
