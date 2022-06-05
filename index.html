@@ -28,7 +28,7 @@ const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth,window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
-const ambientlight = new THREE.AmbientLight(0xffffff,0.3)
+const ambientlight = new THREE.AmbientLight(0xffffff,0.1)
 const pointlight = new THREE.PointLight(0xffffff,0.8)
 pointlight.position.set(0,2,0)
 
@@ -91,13 +91,13 @@ enter_handler = () => {
     if(listencamera == true) {
         listencamera = false;
         listentyping = true;
-        div.innerHTML = "typing mode: "
+        div.innerHTML = "typing mode: ";
         return;
     }
     if(listentyping == true){
         execute_command();
         typedword = "";
-        div.innerHTML = "camera mode"
+        div.innerHTML = "camera mode";
         listentyping = false;
         listencamera = true;
     }
@@ -109,13 +109,25 @@ remove_grid_element = () => {
 }
 
 execute_command = () =>{
+    // get parameters
     words = typedword.split(" ");
-    if(words[0] == "wall"){
-        gridx = parseInt(words[1]);
-        gridy = parseInt(words[2]);
-        gridz = parseInt(words[3]);
-        color = words[4];
-    }
+    geometryword = words[0];
+    gridx = parseInt(words[1]);
+    gridy = parseInt(words[2]);
+    gridz = parseInt(words[3]);
+    color = words[4];
+
+
+    
+    propmaterial = new THREE.MeshPhongMaterial({color:words[4]});
+    propgeometry = new THREE.BoxGeometry(1,1,1);
+    propmesh = new THREE.Mesh(propgeometry,propmaterial);
+    propmesh.position.set(gridx,gridy,gridz);
+    scene.add(propmesh);
+
+
+ 
+
 }
 
 camerahandler = (event) =>{
@@ -144,10 +156,10 @@ camerahandler = (event) =>{
         //z-=speed*Math.sin(b);
         //y-=speed*Math.cos(c);
         //x-=speed*Math.sin(b);
-        y+=speed;
+        y-=speed;
     }
     if(event.key=="r"){
-        y-=speed;
+        y+=speed;
         //z+=speed*Math.sin(b);
         //y+=speed*Math.cos(c);
         //x+=speed*Math.sin(b);
@@ -186,7 +198,7 @@ listentypinghandler = (event) =>{
         typedword += event.key;
     }
 
-    div.innerHTML = "typing mode: " + typedword;
+    div.innerHTML = "typing mode: " + typedword + "|";
 }
 
 window.addEventListener("keydown",(event)=>{
