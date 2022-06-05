@@ -7,10 +7,15 @@
 <body>
 <script src = "three.js"></script>
 <script>
-query = document.createElement("input");
-query.setAttribute("type","textarea");
-document.body.append(query);
-query.setAttribute("width","1000")
+//query = document.createElement("input");
+//query.setAttribute("type","textarea");
+//document.body.append(query);
+//query.setAttribute("width","1000")
+
+div = document.createElement("div");
+div.setAttribute("style","font-family:verdana;font-size:24px;color:yellow");
+div.innerHTML = "camera mode";
+document.body.append(div);
 
 document.body.style.backgroundColor = "#000000"
         
@@ -23,15 +28,39 @@ const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth,window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
-const light = new THREE.DirectionalLight(0xffffff,1)
-light.position.set(1,1,-1)
+const ambientlight = new THREE.AmbientLight(0xffffff,0.3)
+const pointlight = new THREE.PointLight(0xffffff,0.8)
+pointlight.position.set(0,2,0)
 
-const boxgeometry = new THREE.BoxGeometry(1,1,1)
-const material = new THREE.MeshBasicMaterial({color:0x00ff88})
+const boxgeometry = new THREE.SphereGeometry(1,30,30)
+const material = new THREE.MeshPhongMaterial({color:0xffaa11,flatShading:false,side: THREE.DoubleSide})
 const mesh = new THREE.Mesh(boxgeometry,material)
-mesh.position.set(0,0,-3)
+mesh.position.set(-3,0,-3)
 
+scene.add(ambientlight, pointlight)
 scene.add(mesh)
+
+const planegeometry = new THREE.PlaneGeometry(20,20)
+const redmaterial = new THREE.MeshPhongMaterial({color:0xff6532,flatShading:false,side: THREE.DoubleSide})
+mesh_grid = new THREE.Mesh(planegeometry,redmaterial)
+mesh_grid.position.set(0,-1,1)
+mesh_grid.rotation.x=Math.PI/2
+
+const wireframe = new THREE.WireframeGeometry(planegeometry);
+const lines = new THREE.LineSegments(wireframe)
+lines.position.set(0,-1,1)
+lines.rotation.x=Math.PI/2
+
+const gridhelper = new THREE.GridHelper(20,20);
+gridhelper.position.set(0,-1,1)
+
+scene.add(gridhelper)
+
+//scene.add(lines)
+
+scene.add(mesh_grid)
+
+scene.background = new THREE.Color(0xffffff);
 
 //camera.position.z = 5
 
@@ -42,76 +71,133 @@ x=0
 y=0
 z=0
 a=0;b=0;c=0;
-speed = 0.5
+speed = 0.5;
 rotspeed = Math.PI /8;
-listenenter = false
+listentyping = false;
+listencamera = true;
+typedword = "";
+
+camera.position.set(x,y,z);
+camera.lookAt(x-Math.sin(b),y+Math.sin(a),z-Math.cos(b));
 
 updaterender = () => {
     camera.position.set(x,y,z);
-    camera.rotation.set(a,b,c);
+    camera.lookAt(x-Math.sin(b),  y+Math.sin(a),   z-Math.cos(b));
+    // +sin(a) to both for y upside down??
     renderer.render(scene, camera);
 }
 
-dolistenenter = () => {
+enter_handler = () => {
+    if(listencamera == true) {
+        listencamera = false;
+        listentyping = true;
+        div.innerHTML = "typing mode: "
+        return;
+    }
+    if(listentyping == true){
+        execute_command();
+        typedword = "";
+        div.innerHTML = "camera mode"
+        listentyping = false;
+        listencamera = true;
+    }
+}
+
+// remove grid element search here
+remove_grid_element = () => {
 
 }
-        
-window.addEventListener("keypress",(event)=>{
-    if(event.key == "Enter"){
-        listenenter = !listenenter;
+
+execute_command = () =>{
+    words = typedword.split(" ");
+    if(words[0] == "wall"){
+        gridx = parseInt(words[1]);
+        gridy = parseInt(words[2]);
+        gridz = parseInt(words[3]);
+        color = words[4];
     }
-    if(listenenter){
-        dolistenenter();
-    }
-    if(listenenter) return;
+}
+
+camerahandler = (event) =>{
+    // position keys
     if(event.key=="w"){
-        z-=speed
-        updaterender();
+        z-=speed*Math.cos(b);
+        y-=speed*Math.sin(-a);
+        x-=speed*Math.sin(b);
     }
     if(event.key=="s"){
-        z+=speed
-        updaterender();
+        z+=speed*Math.cos(b);
+        y+=speed*Math.sin(-a);
+        x+=speed*Math.sin(b);
     }
     if(event.key=="a"){
-        x-=speed
-        updaterender();
+        z-=speed*Math.sin(-b);
+        y-=speed*Math.sin(c);
+        x-=speed*Math.cos(-b);
     }
     if(event.key=="d"){
-        x+=speed
-        updaterender();
+        z+=speed*Math.sin(-b);
+        y+=speed*Math.sin(c);
+        x+=speed*Math.cos(-b);
     }
     if(event.key=="f"){
-        y-=speed
-        updaterender();
+        //z-=speed*Math.sin(b);
+        //y-=speed*Math.cos(c);
+        //x-=speed*Math.sin(b);
+        y+=speed;
     }
     if(event.key=="r"){
-        y+=speed
-        updaterender();
+        y-=speed;
+        //z+=speed*Math.sin(b);
+        //y+=speed*Math.cos(c);
+        //x+=speed*Math.sin(b);
     }
-
+    // rotation keys
     if(event.key=="g"){
         a-=rotspeed
-        updaterender();
     }
     if(event.key=="t"){
         a+=rotspeed
-        updaterender();
     }
     if(event.key=="e"){
         b-=rotspeed
-        updaterender();
     }
     if(event.key=="q"){
         b+=rotspeed
-        updaterender();
     }
     if(event.key=="z"){
         c-=rotspeed
-        updaterender();
     }
     if(event.key=="c"){
-        c+=rotspeed
-        updaterender();
+        c+=rotspeed   
+    }
+    updaterender();
+}
+
+
+listentypinghandler = (event) =>{
+    if(event.key == "Enter") return;
+
+    if(event.key == "Backspace"){
+        typedword = typedword.substring(0,typedword.length - 1);
+    }
+
+    if(event.key != "Backspace"){
+        typedword += event.key;
+    }
+
+    div.innerHTML = "typing mode: " + typedword;
+}
+
+window.addEventListener("keydown",(event)=>{
+    if(event.key == "Enter"){
+        enter_handler();
+    }
+    if(listencamera == true) {
+        camerahandler(event);
+    }
+    if(listentyping == true){
+        listentypinghandler(event);
     }
 })
 </script>
