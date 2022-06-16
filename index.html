@@ -7,6 +7,17 @@
 <body>
 <script src = "three.js"></script>
 <script>
+
+//import { FontLoader } from 'https://threejs.org/examples/jsm/loaders/FontLoader.js';		// to step 11
+//import { TextGeometry } from 'https://threejs.org/examples/jsm/geometries/TextGeometry.js'; // to step 11
+
+globals = {}
+globals.cameramode_label = "camera mode (press enter for command mode)"
+globals.typingmode_label = "typing mode: "
+
+
+
+
 //query = document.createElement("input");
 //query.setAttribute("type","textarea");
 //document.body.append(query);
@@ -14,27 +25,28 @@
 
 div = document.createElement("div");
 div.setAttribute("style","font-family:verdana;font-size:24px;color:yellow");
-div.innerHTML = "camera mode";
+div.innerHTML = globals.cameramode_label;
 document.body.append(div);
 
 document.body.style.backgroundColor = "#000000"
         
 
-const camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight );
+const camera = new THREE.PerspectiveCamera( 50, window.innerWidth / (window.innerHeight - 50) );
 const scene = new THREE.Scene();
         
         
-const renderer = new THREE.WebGLRenderer()
-renderer.setSize(window.innerWidth,window.innerHeight)
+const renderer = new THREE.WebGLRenderer({antialias:true})
+renderer.setSize(window.innerWidth,window.innerHeight - 50)
 document.body.appendChild(renderer.domElement)
 
 const ambientlight = new THREE.AmbientLight(0xffffff,0.1)
-const pointlight = new THREE.PointLight(0xffffff,0.8)
+const pointlight = new THREE.PointLight(0xffffff,0.4)
 pointlight.position.set(0,2,0)
 
 const boxgeometry = new THREE.SphereGeometry(1,30,30)
-const material = new THREE.MeshPhongMaterial({color:0xffaa11,flatShading:false,side: THREE.DoubleSide})
+const material = new THREE.MeshPhongMaterial({color:0xffaa11,flatShading:false,opacity:0.9,transparent:true,side: THREE.DoubleSide})
 const mesh = new THREE.Mesh(boxgeometry,material)
+mesh.castShadow = true;
 mesh.position.set(-3,0,-3)
 
 scene.add(ambientlight, pointlight)
@@ -61,11 +73,38 @@ scene.add(gridhelper)
 scene.add(mesh_grid)
 
 scene.background = new THREE.Color(0xffffff);
+scene.fog = new THREE.Fog(0xffffff,250,1400);
 
 //camera.position.z = 5
 
 
-renderer.render(scene, camera)
+// 1001fonts
+// fonts.google.com
+// gero3.github.io/facetype.js/
+/*
+const loader = new THREE.FontLoader();
+loader.load('./Joan_Regular.json', (font) => {
+    const geometry = new THREE.TextGeometry("Hi.\nHow are you?",
+    {
+        font: font,
+        size: 6,
+        height: 2
+    })
+
+    const textmesh = new THREE.Mesh(geometry, [
+        new THREE.MeshPhongMaterial({color:0xffaa44}),
+        new THREE.MeshPhongMaterial({color:0xffa44})
+    ])
+
+    textmesh.castShadow = true;
+    textmesh.position.set(0,0,0);
+
+    scene.add()
+})
+*/
+
+
+renderer.render(scene, camera);
 
 x=0
 y=0
@@ -91,13 +130,13 @@ enter_handler = () => {
     if(listencamera == true) {
         listencamera = false;
         listentyping = true;
-        div.innerHTML = "typing mode: ";
+        div.innerHTML = globals.typingmode_label;
         return;
     }
     if(listentyping == true){
         execute_command();
         typedword = "";
-        div.innerHTML = "camera mode";
+        div.innerHTML = globals.cameramode_label;
         listentyping = false;
         listencamera = true;
     }
@@ -108,22 +147,75 @@ remove_grid_element = () => {
 
 }
 
+// have remove function
+// display coordinates of camera
+// option to display of list of objects in scene
+
+// the sadness of leaving
+// the joy of returning
+// the appreciation of staying
+// the curiosity of being alone
+// responsiveness
+get_parameters = () =>
+{
+    parameters = {};
+    words = typedword.split(" ");
+    parameters.geometry = words[0];
+    words.length > 1? parameters.gridx = parseInt(words[1]) : parameters.gridx = 0;
+    words.length > 2? parameters.gridy = parseInt(words[2]) : parameters.gridy = 0;
+    words.length > 3? parameters.gridz = parseInt(words[3]) : parameters.gridz = 0;
+    words.length > 4? parameters.width = parseInt(words[4]) : parameters.width = 1;
+    words.length > 5? parameters.height = parseInt(words[5]) : parameters.height = 1;
+    words.length > 6? parameters.depth = parseInt(words[6]) : parameters.depth = 1;
+    words.length > 7? parameters.color = words[7] : parameters.color = "white";
+    words.length > 8? parameters.intensity = words[8] : parameters.intensity = 1.0;
+    words.length > 9? parameters.text = words[9] : parameters.text = "";
+    return parameters;
+}
+
+draw_light = (parameters) => {
+    const pointlight = new THREE.PointLight(parameters.color,1.0);
+    pointlight.position.set(parameters.gridx,parameters.gridy,parameters.gridz);
+    scene.add(pointlight);
+}
+
+draw_box = (parameters) => {
+    propmaterial = new THREE.MeshPhongMaterial({color:parameters.color});
+    propgeometry = new THREE.BoxGeometry(parameters.width,parameters.height,parameters.depth);
+    propmesh = new THREE.Mesh(propgeometry,propmaterial);
+    propmesh.position.set(parameters.gridx,parameters.gridy,parameters.gridz);
+    scene.add(propmesh);
+}
+
+draw_text = (parameters) => {
+
+}
+
+draw_plane = (parameters) => {
+
+}
+
 execute_command = () =>{
     // get parameters
-    words = typedword.split(" ");
-    geometryword = words[0];
-    gridx = parseInt(words[1]);
-    gridy = parseInt(words[2]);
-    gridz = parseInt(words[3]);
-    color = words[4];
+    parameters = get_parameters();
 
+    if (parameters.geometry == "light"){
+        draw_light(parameters);
+    }
+    if (parameters.geometry == "box"){
+        draw_box(parameters);
+    }
+    if (parameters.geometry == "plane"){
+        draw_light(parameters);
+    }
+    if (parameters.geometry == "taurus"){
+        draw_light(parameters);
+    }
+    if (parameters.geometry == "text"){
+        draw_light(parameters);
+    }
 
     
-    propmaterial = new THREE.MeshPhongMaterial({color:words[4]});
-    propgeometry = new THREE.BoxGeometry(1,1,1);
-    propmesh = new THREE.Mesh(propgeometry,propmaterial);
-    propmesh.position.set(gridx,gridy,gridz);
-    scene.add(propmesh);
 
 
  
