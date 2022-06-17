@@ -111,8 +111,8 @@ x=0
 y=0
 z=0
 a=0;b=0;c=0;
-speed = 0.5;
-rotspeed = Math.PI /8;
+speed = 0.04;
+rotspeed = Math.PI *speed/16;
 listentyping = false;
 listencamera = true;
 typedword = "";
@@ -207,7 +207,7 @@ draw_plane = (parameters) => {
 
 draw_torus = (parameters) => {
     propmaterial = new THREE.MeshPhongMaterial({color:parameters.color,side:THREE.DoubleSide});
-    propgeometry = new THREE.TorusGeometry(arameters.width,parameters.height,parameters.depth,50);
+    propgeometry = new THREE.TorusGeometry(parameters.width,parameters.height,parameters.depth,50);
     propmesh = new THREE.Mesh(propgeometry,propmaterial);
     propmesh.position.set(parameters.gridx,parameters.gridy,parameters.gridz);
     propmesh.rotation.set(parameters.rotationx,parameters.rotationy,parameters.rotationz);
@@ -216,7 +216,7 @@ draw_torus = (parameters) => {
 
 draw_sphere = (parameters) => {
     propmaterial = new THREE.MeshPhongMaterial({color:parameters.color,side:THREE.DoubleSide});
-    propgeometry = new THREE.TorusGeometry(arameters.width,parameters.height,parameters.depth,50);
+    propgeometry = new THREE.SphereGeometry(arameters.width,parameters.height,parameters.depth);
     propmesh = new THREE.Mesh(propgeometry,propmaterial);
     propmesh.position.set(parameters.gridx,parameters.gridy,parameters.gridz);
     propmesh.rotation.set(parameters.rotationx,parameters.rotationy,parameters.rotationz);
@@ -245,6 +245,9 @@ execute_command = () =>{
     if (parameters.geometry == "sphere"){
         draw_sphere(parameters);
     }
+    if (parameters.geometry == "speed"){
+        speed = paramters.gridx;
+    }
     // cylinder
     // cone
     // tube
@@ -253,60 +256,218 @@ execute_command = () =>{
 
 }
 
-camerahandler = (event) =>{
+camera_w_timer = setTimeout(() => {},1);
+camera_a_timer = setTimeout(() => {},1);
+camera_s_timer = setTimeout(() => {},1);
+camera_d_timer = setTimeout(() => {},1);
+
+camera_f_timer = setTimeout(() => {},1);
+camera_r_timer = setTimeout(() => {},1);
+camera_g_timer = setTimeout(() => {},1);
+camera_t_timer = setTimeout(() => {},1);
+
+camera_e_timer = setTimeout(() => {},1);
+camera_q_timer = setTimeout(() => {},1);
+camera_z_timer = setTimeout(() => {},1);
+camera_c_timer = setTimeout(() => {},1);
+
+camera_w_timer_count = 0;
+camera_a_timer_count = 0;
+camera_s_timer_count = 0;
+camera_d_timer_count = 0;
+
+camera_f_timer_count = 0;
+camera_r_timer_count = 0;
+camera_g_timer_count = 0;
+camera_t_timer_count = 0;
+
+camera_e_timer_count = 0;
+camera_q_timer_count = 0;
+camera_z_timer_count = 0;
+camera_c_timer_count = 0;
+
+camera_w = () => {
+    z-=speed*Math.cos(b);
+    y-=speed*Math.sin(-a);
+    x-=speed*Math.sin(b);
+    updaterender();
+}
+camera_s = () => {
+    z+=speed*Math.cos(b);
+    y+=speed*Math.sin(-a);
+    x+=speed*Math.sin(b);
+    updaterender();
+}
+camera_a = () => {
+    z-=speed*Math.sin(-b);
+    y-=speed*Math.sin(c);
+    x-=speed*Math.cos(-b);
+    updaterender();
+}
+camera_d = () => {
+    z+=speed*Math.sin(-b);
+    y+=speed*Math.sin(c);
+    x+=speed*Math.cos(-b);
+    updaterender();
+}
+
+camera_f = () => {
+    y-=speed;
+    updaterender();
+}
+camera_r = () => {
+    y+=speed;
+    updaterender();
+}
+camera_g = () => {
+    a-=rotspeed
+    updaterender();
+}
+camera_t = () => {
+    a+=rotspeed
+    updaterender();
+}
+
+camera_e = () => {
+    b-=rotspeed
+    updaterender();
+}
+camera_q = () => {
+    b+=rotspeed
+    updaterender();
+}
+camera_z = () => {
+    c-=rotspeed
+    updaterender();
+}
+camera_c = () => {
+    c+=rotspeed 
+    updaterender();
+}
+
+
+camerahandler_keydown = (event) =>{
     // position keys
     if(event.key=="w"){
-        z-=speed*Math.cos(b);
-        y-=speed*Math.sin(-a);
-        x-=speed*Math.sin(b);
+        if (camera_w_timer_count > 0) return;
+        camera_w_timer_count++;
+        camera_w_timer = setInterval(camera_w,6);
     }
     if(event.key=="s"){
-        z+=speed*Math.cos(b);
-        y+=speed*Math.sin(-a);
-        x+=speed*Math.sin(b);
+        if (camera_s_timer_count > 0) return;
+        camera_s_timer_count++;
+        camera_s_timer = setInterval(camera_s,6);
     }
     if(event.key=="a"){
-        z-=speed*Math.sin(-b);
-        y-=speed*Math.sin(c);
-        x-=speed*Math.cos(-b);
+        if (camera_a_timer_count > 0) return;
+        camera_a_timer_count++;
+        camera_a_timer = setInterval(camera_a,6);
     }
     if(event.key=="d"){
-        z+=speed*Math.sin(-b);
-        y+=speed*Math.sin(c);
-        x+=speed*Math.cos(-b);
+        if (camera_d_timer_count > 0) return;
+        camera_d_timer_count++;
+        camera_d_timer = setInterval(camera_d,6);
     }
     if(event.key=="f"){
+        if (camera_f_timer_count > 0) return;
+        camera_f_timer_count++;
+        camera_f_timer = setInterval(camera_f,6);
         //z-=speed*Math.sin(b);
         //y-=speed*Math.cos(c);
         //x-=speed*Math.sin(b);
-        y-=speed;
     }
     if(event.key=="r"){
-        y+=speed;
+        if (camera_r_timer_count > 0) return;
+        camera_r_timer_count++;
+        camera_r_timer = setInterval(camera_r,6);
         //z+=speed*Math.sin(b);
         //y+=speed*Math.cos(c);
         //x+=speed*Math.sin(b);
     }
     // rotation keys
     if(event.key=="g"){
-        a-=rotspeed
+        if (camera_g_timer_count > 0) return;
+        camera_g_timer_count++;
+        camera_g_timer = setInterval(camera_g,6);
     }
     if(event.key=="t"){
-        a+=rotspeed
+        if (camera_t_timer_count > 0) return;
+        camera_t_timer_count++;
+        camera_t_timer = setInterval(camera_t,6);
     }
     if(event.key=="e"){
-        b-=rotspeed
+        if (camera_e_timer_count > 0) return;
+        camera_e_timer_count++;
+        camera_e_timer = setInterval(camera_e,6);
     }
     if(event.key=="q"){
-        b+=rotspeed
+        if (camera_q_timer_count > 0) return;
+        camera_q_timer_count++;
+        camera_q_timer = setInterval(camera_q,6);
     }
     if(event.key=="z"){
-        c-=rotspeed
+        if (camera_z_timer_count > 0) return;
+        camera_z_timer_count++;
+        camera_z_timer = setInterval(camera_z,6);
     }
     if(event.key=="c"){
-        c+=rotspeed   
+        if (camera_c_timer_count > 0) return;
+        camera_c_timer_count++;
+        camera_c_timer = setInterval(camera_c,6);
     }
-    updaterender();
+}
+
+camerahandler_keyup = (event) => {
+    // position keys
+    if(event.key=="w"){
+        camera_w_timer_count=0;
+        clearInterval(camera_w_timer);
+    }
+    if(event.key=="s"){
+        camera_s_timer_count=0;
+        clearInterval(camera_s_timer);
+    }
+    if(event.key=="a"){
+        camera_a_timer_count=0;
+        clearInterval(camera_a_timer);
+    }
+    if(event.key=="d"){
+        camera_d_timer_count=0;
+        clearInterval(camera_d_timer);
+    }
+    if(event.key=="f"){
+        camera_f_timer_count=0;
+        clearInterval(camera_f_timer);
+    }
+    if(event.key=="r"){
+        camera_r_timer_count=0;
+        clearInterval(camera_r_timer);
+    }
+    // rotation keys
+    if(event.key=="g"){
+        camera_g_timer_count=0;
+        clearInterval(camera_g_timer);
+    }
+    if(event.key=="t"){
+        camera_t_timer_count=0;
+        clearInterval(camera_t_timer);
+    }
+    if(event.key=="e"){
+        camera_e_timer_count=0;
+        clearInterval(camera_e_timer);
+    }
+    if(event.key=="q"){
+        camera_q_timer_count=0;
+        clearInterval(camera_q_timer);
+    }
+    if(event.key=="z"){
+        camera_z_timer_count=0;
+        clearInterval(camera_z_timer);
+    }
+    if(event.key=="c"){
+        camera_c_timer_count=0;
+        clearInterval(camera_c_timer);
+    }
 }
 
 
@@ -329,10 +490,16 @@ window.addEventListener("keydown",(event)=>{
         enter_handler();
     }
     if(listencamera == true) {
-        camerahandler(event);
+        camerahandler_keydown(event);
     }
     if(listentyping == true){
         listentypinghandler(event);
+    }
+})
+
+window.addEventListener("keyup",(event)=>{
+    if(listencamera == true) {
+        camerahandler_keyup(event);
     }
 })
 </script>
