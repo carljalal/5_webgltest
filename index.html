@@ -6,6 +6,7 @@
 </head>
 <body>
 <script src = "three.js"></script>
+<script src = ""></script>
 <script>
 
 //import { FontLoader } from 'https://threejs.org/examples/jsm/loaders/FontLoader.js';		// to step 11
@@ -170,6 +171,9 @@ get_parameters = () =>
     words.length > 7? parameters.color = words[7] : parameters.color = "white";
     words.length > 8? parameters.intensity = words[8] : parameters.intensity = 1.0;
     words.length > 9? parameters.text = words[9] : parameters.text = "";
+    words.length > 10? parameters.text = words[10] : parameters.rotationx = 0.0;
+    words.length > 11? parameters.text = words[11] : parameters.rotationy = 0.0;
+    words.length > 12? parameters.text = words[12] : parameters.rotationz = 0.0;
     return parameters;
 }
 
@@ -180,10 +184,11 @@ draw_light = (parameters) => {
 }
 
 draw_box = (parameters) => {
-    propmaterial = new THREE.MeshPhongMaterial({color:parameters.color});
+    propmaterial = new THREE.MeshPhongMaterial({color:parameters.color,side:THREE.DoubleSide});
     propgeometry = new THREE.BoxGeometry(parameters.width,parameters.height,parameters.depth);
     propmesh = new THREE.Mesh(propgeometry,propmaterial);
     propmesh.position.set(parameters.gridx,parameters.gridy,parameters.gridz);
+    propmesh.rotation.set(parameters.rotationx,parameters.rotationy,parameters.rotationz);
     scene.add(propmesh);
 }
 
@@ -192,7 +197,30 @@ draw_text = (parameters) => {
 }
 
 draw_plane = (parameters) => {
+    propmaterial = new THREE.MeshPhongMaterial({color:parameters.color,side:THREE.DoubleSide});
+    propgeometry = new THREE.PlaneGeometry(parameters.width,parameters.height);
+    propmesh = new THREE.Mesh(propgeometry,propmaterial);
+    propmesh.position.set(parameters.gridx,parameters.gridy,parameters.gridz);
+    propmesh.rotation.set(parameters.rotationx,parameters.rotationy,parameters.rotationz);
+    scene.add(propmesh);
+}
 
+draw_torus = (parameters) => {
+    propmaterial = new THREE.MeshPhongMaterial({color:parameters.color,side:THREE.DoubleSide});
+    propgeometry = new THREE.TorusGeometry(arameters.width,parameters.height,parameters.depth,50);
+    propmesh = new THREE.Mesh(propgeometry,propmaterial);
+    propmesh.position.set(parameters.gridx,parameters.gridy,parameters.gridz);
+    propmesh.rotation.set(parameters.rotationx,parameters.rotationy,parameters.rotationz);
+    scene.add(propmesh);
+}
+
+draw_sphere = (parameters) => {
+    propmaterial = new THREE.MeshPhongMaterial({color:parameters.color,side:THREE.DoubleSide});
+    propgeometry = new THREE.TorusGeometry(arameters.width,parameters.height,parameters.depth,50);
+    propmesh = new THREE.Mesh(propgeometry,propmaterial);
+    propmesh.position.set(parameters.gridx,parameters.gridy,parameters.gridz);
+    propmesh.rotation.set(parameters.rotationx,parameters.rotationy,parameters.rotationz);
+    scene.add(propmesh);
 }
 
 execute_command = () =>{
@@ -206,17 +234,20 @@ execute_command = () =>{
         draw_box(parameters);
     }
     if (parameters.geometry == "plane"){
-        draw_light(parameters);
+        draw_plane(parameters);
     }
-    if (parameters.geometry == "taurus"){
+    if (parameters.geometry == "torus"){
         draw_light(parameters);
     }
     if (parameters.geometry == "text"){
-        draw_light(parameters);
+        draw_text(parameters);
     }
-
-    
-
+    if (parameters.geometry == "sphere"){
+        draw_sphere(parameters);
+    }
+    // cylinder
+    // cone
+    // tube
 
  
 
