@@ -74,7 +74,7 @@ scene.add(gridhelper)
 scene.add(mesh_grid)
 
 scene.background = new THREE.Color(0xffffff);
-scene.fog = new THREE.Fog(0xffffff,250,1400);
+scene.fog = new THREE.Fog(0xffffff,0,50);
 
 //camera.position.z = 5
 
@@ -111,8 +111,8 @@ x=0
 y=0
 z=0
 a=0;b=0;c=0;
-speed = 0.04;
-rotspeed = Math.PI *speed/16;
+speed = 0.15;
+rotspeed = Math.PI *speed/25;
 listentyping = false;
 listencamera = true;
 typedword = "";
@@ -171,9 +171,9 @@ get_parameters = () =>
     words.length > 7? parameters.color = words[7] : parameters.color = "white";
     words.length > 8? parameters.intensity = words[8] : parameters.intensity = 1.0;
     words.length > 9? parameters.text = words[9] : parameters.text = "";
-    words.length > 10? parameters.text = words[10] : parameters.rotationx = 0.0;
-    words.length > 11? parameters.text = words[11] : parameters.rotationy = 0.0;
-    words.length > 12? parameters.text = words[12] : parameters.rotationz = 0.0;
+    words.length > 10? parameters.rotationx = words[10] : parameters.rotationx = 0.0;
+    words.length > 11? parameters.rotationy = words[11] : parameters.rotationy = 0.0;
+    words.length > 12? parameters.rotationz = words[12] : parameters.rotationz = 0.0;
     return parameters;
 }
 
@@ -216,7 +216,7 @@ draw_torus = (parameters) => {
 
 draw_sphere = (parameters) => {
     propmaterial = new THREE.MeshPhongMaterial({color:parameters.color,side:THREE.DoubleSide});
-    propgeometry = new THREE.SphereGeometry(arameters.width,parameters.height,parameters.depth);
+    propgeometry = new THREE.SphereGeometry(parameters.width,parameters.height,parameters.height);
     propmesh = new THREE.Mesh(propgeometry,propmaterial);
     propmesh.position.set(parameters.gridx,parameters.gridy,parameters.gridz);
     propmesh.rotation.set(parameters.rotationx,parameters.rotationy,parameters.rotationz);
@@ -246,7 +246,15 @@ execute_command = () =>{
         draw_sphere(parameters);
     }
     if (parameters.geometry == "speed"){
-        speed = paramters.gridx;
+        speed = paramaters.gridx;
+    }
+    if (parameters.geometry == "fog"){
+        scene.fog = new THREE.Fog(parameters.color, parameters.gridx, parameters.gridy);
+        updaterender();
+    }
+    if (parameters.geometry == "background"){
+        scene.background = new THREE.Color(parameters.color);
+        updaterender();
     }
     // cylinder
     // cone
